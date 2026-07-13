@@ -18,7 +18,8 @@ function App() {
     }
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/translate", {
+      // ⚡ Yahan base URL ke aage endpoint (/api/translate) jod diya hai
+      const response = await axios.post("https://bhashabridge-law0.onrender.com/api/translate", {
         originalText,
         sourceLanguage,
         targetLanguage,
