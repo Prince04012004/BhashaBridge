@@ -3,6 +3,12 @@ import Conversation from '../models/Conversation.js';
 import dotenv from "dotenv";
 dotenv.config();
 
+const languageNames = {
+  en: "English", hi: "Hindi", es: "Spanish", fr: "French",
+  ja: "Japanese", ko: "Korean", bn: "Bengali", ta: "Tamil",
+  te: "Telugu", ar: "Arabic", zh: "Chinese", ru: "Russian",
+  pt: "Portuguese", de: "German",
+};
 
 export const translatetext = async (req, res) => {
 
@@ -14,43 +20,36 @@ export const translatetext = async (req, res) => {
         })
     }
     try {
+        const sourceLangName = languageNames[sourceLanguage] || sourceLanguage;
+        const targetLangName = languageNames[targetLanguage] || targetLanguage;
 
-        const response = await axios.get(process.env.LIBRETRANSLATE_URL, {
-            params: {
-                q: originalText,
-                langpair: `${sourceLanguage}|${targetLanguage}`,
-            },
-        });
-
-        console.log("FULL RESPONSE:", JSON.stringify(response.data, null, 2));
-
-        let translatedtext = response.data.responseData.translatedText;
-
-        // Fallback logic: agar translation khaali hai ya original jaisa hi hai, matches array se better result dhoondo
-        const isSameAsOriginal = translatedtext.trim().toLowerCase() === originalText.trim().toLowerCase();
-
-        if (!translatedtext || translatedtext.trim() === "" || isSameAsOriginal) {
-            const validMatch = response.data.matches.find(
-                (m) => m.translation &&
-                       m.translation.trim() !== "" &&
-                       m.translation.trim().toLowerCase() !== originalText.trim().toLowerCase()
-            );
-            if (validMatch) {
-                translatedtext = validMatch.translation;
-                console.log("Fallback used, new translation:", translatedtext);
+        const response = await axios.post(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+            {
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: `Translate the following text from ${sourceLangName} to ${targetLangName}. Only return the translated text, nothing else, no explanations, no quotes:\n\n${originalText}`
+                            }
+                        ]
+                    }
+                ]
             }
-        }
+        );
+
+        console.log("FULL GEMINI RESPONSE:", JSON.stringify(response.data, null, 2));
+
+        const translatedtext = response.data.candidates[0].content.parts[0].text.trim();
 
         console.log("Final Translated Text:", translatedtext);
 
-        // save in db
         const conversation = await Conversation.create({
             sourcelanguage: sourceLanguage,
             targetlanguage: targetLanguage,
             originaltext: originalText,
             translatetext: translatedtext
         });
-        console.log("mai yahan")
 
         res.status(200).json({
             originalText,
@@ -58,16 +57,12 @@ export const translatetext = async (req, res) => {
             conversation
         });
 
-
-
     }
     catch (error) {
-        console.log("Translation error:", error.message);
+        console.log("Translation error:", error.response?.data || error.message);
         res.status(500).json({ error: "Translation failed. Try again." });
     }
 }
-
-//history
 
 export const gethistory = async (req, res) => {
     try {
