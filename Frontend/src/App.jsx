@@ -10,7 +10,7 @@ function App() {
   const [originalText, setOriginalText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isDark, setIsDark] = useState(true); // ← naya state, dark default hai
+  const [isDark, setIsDark] = useState(true); // dark default hai
 
   const handleTranslate = async () => {
     if (!originalText.trim()) {
@@ -19,7 +19,7 @@ function App() {
     }
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/translate", {
+      const response = await axios.post("https://bhashabridge-law0.onrender.com/api/translate", {
         originalText,
         sourceLanguage,
         targetLanguage,
