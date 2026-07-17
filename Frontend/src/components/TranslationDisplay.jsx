@@ -1,18 +1,32 @@
 function TranslationDisplay({ originalText, translatedText, targetLanguage }) {
 
+  const localeMap = {
+    es: "es-ES", fr: "fr-FR", ja: "ja-JP", ko: "ko-KR", en: "en-US",
+    bn: "bn-IN", ta: "ta-IN", te: "te-IN", ar: "ar-SA", zh: "zh-CN",
+    ru: "ru-RU", pt: "pt-PT", de: "de-DE", hi: "hi-IN",
+  };
+
   const speakText = () => {
     if (!translatedText) return;
 
+    // Purani koi speech chal rahi ho toh pehle cancel kar
+    window.speechSynthesis.cancel();
+
     const utterance = new SpeechSynthesisUtterance(translatedText);
-
-    const localeMap = {
-      es: "es-ES", fr: "fr-FR", ja: "ja-JP", ko: "ko-KR", en: "en-US",
-      bn: "bn-IN", ta: "ta-IN", te: "te-IN", ar: "ar-SA", zh: "zh-CN",
-      ru: "ru-RU", pt: "pt-PT", de: "de-DE", hi: "hi-IN",
-    };
-
-    utterance.lang = localeMap[targetLanguage] || "en-US";
+    const targetLocale = localeMap[targetLanguage] || "en-US";
+    utterance.lang = targetLocale;
     utterance.rate = 0.9;
+
+    // Available voices mein se sahi language wali voice dhoondo
+    const voices = window.speechSynthesis.getVoices();
+    const matchingVoice = voices.find((v) => v.lang === targetLocale) 
+                        || voices.find((v) => v.lang.startsWith(targetLanguage));
+
+    if (matchingVoice) {
+      utterance.voice = matchingVoice;
+    } else {
+      console.log(`Koi voice nahi mili ${targetLocale} ke liye, default use ho rahi hai`);
+    }
 
     window.speechSynthesis.speak(utterance);
   };
