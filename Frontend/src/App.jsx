@@ -100,6 +100,7 @@ function App() {
           <TranslationDisplay
             originalText={originalText}
             translatedText={translatedText}
+             targetLanguage={targetLanguage}
           />
         </div>
 
