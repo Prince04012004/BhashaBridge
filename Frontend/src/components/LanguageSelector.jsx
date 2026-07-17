@@ -6,6 +6,10 @@ const languages = [
   { code: "te", name: "Telugu" }, { code: "ar", name: "Arabic" },
   { code: "zh", name: "Chinese" }, { code: "ru", name: "Russian" },
   { code: "pt", name: "Portuguese" }, { code: "de", name: "German" },
+  { code: "pa", name: "Punjabi" },
+  { code: "bho", name: "Bhojpuri" },
+  { code: "raj", name: "Rajasthani" },
+  { code: "mr", name: "Marathi" },   // ← naya add kiya
 ];
 
 function LanguageSelector({ sourceLanguage, setSourceLanguage, targetLanguage, setTargetLanguage }) {

@@ -4,6 +4,8 @@ const localeMap = {
   es: "es-ES", fr: "fr-FR", ja: "ja-JP", ko: "ko-KR", en: "en-US",
   bn: "bn-IN", ta: "ta-IN", te: "te-IN", ar: "ar-SA", zh: "zh-CN",
   ru: "ru-RU", pt: "pt-PT", de: "de-DE", hi: "hi-IN",
+  pa: "pa-IN",
+  mr: "mr-IN",   // ← naya add kiya, Marathi ke liye full support hai
 };
 
 function MicInput({ sourceLanguage, originalText, setOriginalText }) {
