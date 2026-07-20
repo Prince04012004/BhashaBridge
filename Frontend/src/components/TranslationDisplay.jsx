@@ -15,9 +15,12 @@ function TranslationDisplay({ originalText, translatedText, targetLanguage, isDa
     const utterance = new SpeechSynthesisUtterance(translatedText);
     const targetLocale = localeMap[targetLanguage] || "en-US";
     utterance.lang = targetLocale;
-    utterance.rate = 0.9;
+    utterance.rate = 0.9;      // thoda slow - samajhna easy rahe
+    utterance.pitch = 1;       // 0 (deep) se 2 (high) tak - 1 natural hai
+    utterance.volume = 1;      // full volume
+
     const voices = window.speechSynthesis.getVoices();
-    const matchingVoice = voices.find((v) => v.lang === targetLocale) 
+    const matchingVoice = voices.find((v) => v.lang === targetLocale)
                         || voices.find((v) => v.lang.startsWith(targetLanguage));
     if (matchingVoice) utterance.voice = matchingVoice;
     window.speechSynthesis.speak(utterance);
